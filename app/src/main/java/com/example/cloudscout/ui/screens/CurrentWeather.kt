@@ -1,67 +1,51 @@
 package com.example.cloudscout.ui.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.cloudscout.viewmodel.MainViewModel
+import com.example.cloudscout.viewmodel.Weather
 
 @Composable
-fun CurrentWeather(navController: NavController, viewModel: MainViewModel = viewModel()) {
-    val weather by viewModel.weather
+fun CurrentWeather(navController: NavHostController, viewModel: MainViewModel) {
+    val weather: Weather by viewModel.currentWeather.collectAsState()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(Color(0xFF87CEEB), Color(0xFFB0E0E6))))
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+    Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(32.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.85f)),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(24.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = weather.icon),
-                        contentDescription = "Weather Icon",
-                        modifier = Modifier.size(120.dp)
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(weather.condition, fontSize = 28.sp, color = Color.Black)
-                    Text(weather.temperature, fontSize = 36.sp, color = Color.Black)
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text("Precipitation: ${weather.precipitation}", fontSize = 16.sp)
-                    Text("Wind: ${weather.wind}", fontSize = 16.sp)
-                }
-            }
+            Image(
+                painter = painterResource(id = weather.icon),
+                contentDescription = "Weather Icon",
+                modifier = Modifier.size(100.dp),
+                contentScale = ContentScale.Fit
+            )
 
-            Spacer(modifier = Modifier.height(32.dp))
-            Button(
-                onClick = { navController.navigate("forecast") },
-                modifier = Modifier.fillMaxWidth(0.5f)
-            ) {
-                Text("View Forecast")
-            }
+            Spacer(modifier = Modifier.height(48.dp))
+
+            Text(weather.condition, fontSize = 20.sp, fontWeight = FontWeight.Medium)
+            Text("${weather.temperature}°C", fontSize = 48.sp, fontWeight = FontWeight.Bold)
+            Text("Feels like ${weather.feelsLike}°C", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+            Text("Wind ${weather.windSpeed}", fontSize = 16.sp, fontWeight = FontWeight.Medium)
         }
     }
-}
