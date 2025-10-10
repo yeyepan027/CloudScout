@@ -2,6 +2,7 @@ package com.example.cloudscout.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,11 +28,13 @@ import com.example.cloudscout.viewmodel.Weather
 fun CurrentWeather(navController: NavHostController, viewModel: MainViewModel) {
     val weather: Weather by viewModel.currentWeather.collectAsState()
 
-    Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp),
-            verticalArrangement = Arrangement.Center,
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 32.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
@@ -41,7 +44,7 @@ fun CurrentWeather(navController: NavHostController, viewModel: MainViewModel) {
                 contentScale = ContentScale.Fit
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Text(weather.condition, fontSize = 20.sp, fontWeight = FontWeight.Medium)
             Text("${weather.temperature}°C", fontSize = 48.sp, fontWeight = FontWeight.Bold)
@@ -49,3 +52,4 @@ fun CurrentWeather(navController: NavHostController, viewModel: MainViewModel) {
             Text("Wind ${weather.windSpeed}", fontSize = 16.sp, fontWeight = FontWeight.Medium)
         }
     }
+}
