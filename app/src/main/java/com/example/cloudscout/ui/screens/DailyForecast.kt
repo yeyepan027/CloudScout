@@ -1,12 +1,7 @@
 package com.example.cloudscout.ui.screens
+
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -16,30 +11,39 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.example.cloudscout.viewmodel.MainViewModel
-
+import com.example.cloudscout.util.getWeatherIconRes
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
-fun DailyForecast(navController: NavHostController, viewModel: MainViewModel) {
-    val forecasts by viewModel.forecastList.collectAsState()
+fun DailyForecast(viewModel: MainViewModel) {
 
-    LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp)
+    val weather by viewModel.weather.collectAsState()
+    val forecastDays = weather?.forecast?.forecastDay ?: emptyList()
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp)
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
         ) {
-            items(forecasts) { forecast ->
+            items(forecastDays) { day ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    colors = CardDefaults.cardColors(containerColor = Transparent)
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.Black.copy(alpha = 0.6f) // darker semi-transparent background
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.16.dp)
                 ) {
                     Row(
                         modifier = Modifier
@@ -48,12 +52,27 @@ fun DailyForecast(navController: NavHostController, viewModel: MainViewModel) {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column {
-                            Text(forecast.date, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                            Text("${forecast.high}°C High  ${forecast.low}°C Low", fontSize = 14.sp)
-                            Text(forecast.description, fontSize = 12.sp)
+                            Text(
+                                text = formatDate(day.date),
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Text(
+                                text = "${day.day.maxTemp}°C High  ${day.day.minTemp}°C Low",
+                                fontSize = 16.sp,
+                                color = Color.White
+                            )
+                            Text(
+                                text = day.day.condition.text,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
                         }
+
                         Image(
-                            painter = painterResource(id = forecast.icon),
+                            painter = painterResource(id = getWeatherIconRes(day.day.condition.text)),
                             contentDescription = "Forecast Icon",
                             modifier = Modifier.size(40.dp)
                         )
@@ -62,3 +81,16 @@ fun DailyForecast(navController: NavHostController, viewModel: MainViewModel) {
             }
         }
     }
+}
+
+// Helper function to format date
+fun formatDate(dateString: String): String {
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("MMMM dd, yyyy, EEEE", Locale.getDefault())
+        val date = inputFormat.parse(dateString)
+        outputFormat.format(date ?: dateString)
+    } catch (_: Exception) {
+        dateString
+    }
+}

@@ -64,4 +64,13 @@ dependencies {
     implementation("androidx.compose.ui:ui:1.5.1")
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.1")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.30.1")
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // Google Play location service
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+// Accompanist permissions
+    implementation("com.google.accompanist:accompanist-permissions:0.37.3")
 }
